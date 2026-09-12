@@ -11,10 +11,16 @@ public class App {
             List<String> linhas = lerArquivo(diretorio + "TESTE-%02d.txt".formatted(i));
             int quantum = Integer.parseInt(linhas.removeFirst());
             List<Processo> processos = linhas.stream().map(l -> new Processo(Integer.parseInt(l.split(" ")[0]), Integer.parseInt(l.split(" ")[1]))).toList();
-            Metricas metricaFIFO = (new AlgoritmoFIFO()).executar(processos);
-            Metricas metricaSJF = (new AlgoritmoSJF()).executar(processos);
-            Metricas metricaSRT = (new AlgoritmoSRT()).executar(processos);
-            Metricas metricaRR = (new AlgoritmoRR(quantum)).executar(processos);
+
+            List<Processo> processosFIFO = processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
+            List<Processo> processosSJF = processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
+            List<Processo> processosSRT = processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
+            List<Processo> processosRR = processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
+
+            Metricas metricaFIFO = (new AlgoritmoFIFO()).executar(processosFIFO);
+            Metricas metricaSJF = (new AlgoritmoSJF()).executar(processosSJF);
+            Metricas metricaSRT = (new AlgoritmoSRT()).executar(processosSRT);
+            Metricas metricaRR = (new AlgoritmoRR(quantum)).executar(processosRR);
             gravarArquivo(diretorio + "TESTE-%02d-RESULTADO.txt".formatted(i), List.of(metricaFIFO.toString(), metricaSJF.toString(), metricaSRT.toString(), metricaRR.toString()));
         }
     }
