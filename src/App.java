@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class App {
-    private static final String diretorio = "E:\\";
+    private static final String diretorio = "C:\\Teste_SistemasOperacionais\\";
     private static final int arquivos = 3;
 
     public App() {
