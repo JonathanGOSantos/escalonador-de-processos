@@ -7,7 +7,7 @@ public class AlgoritmoFIFO implements Algoritmo {
         for (Processo processo : processos) {
             tempoAtual = Math.max(tempoAtual, processo.getTempoChegada());
             processo.setTempoPrimeiraExecucao(tempoAtual);
-            tempoAtual += processo.getTempoServico() - 1;
+            tempoAtual += processo.getTempoServico();
             processo.setTempoConclusao(tempoAtual - 1);
         }
 
