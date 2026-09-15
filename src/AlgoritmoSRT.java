@@ -20,6 +20,12 @@ public class AlgoritmoSRT implements Algoritmo {
                 } else {
                     fila.add(primeiro);
                 }
+            } else if (indiceProximoProcesso.get() < processos.size()) {
+                int proximoTempo = processos.get(indiceProximoProcesso.get()).getTempoChegada();
+                if (proximoTempo > tempo) {
+                    tempo = proximoTempo;
+                    continue;
+                }
             }
             tempo++;
         }

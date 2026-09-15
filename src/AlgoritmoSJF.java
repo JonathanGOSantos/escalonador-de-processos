@@ -27,7 +27,13 @@ public class AlgoritmoSJF implements Algoritmo {
                 processoMaisCurto.setTempoRestante(0);
                 processosConcluidos++;
             } else {
-                tempoAtual++;
+                int proximoTempo = Integer.MAX_VALUE;
+                for (Processo processo : processos) {
+                    if (!processo.concluido() && processo.getTempoChegada() > tempoAtual) {
+                        proximoTempo = Math.min(proximoTempo, processo.getTempoChegada());
+                    }
+                }
+                tempoAtual = proximoTempo;
             }
         }
         double somaResposta = 0;
