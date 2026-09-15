@@ -10,8 +10,11 @@ public class AlgoritmoSJF implements Algoritmo {
         while (processosConcluidos < totalProcessos) {
             Processo processoMaisCurto = null;
             for (Processo processo : processos) {
-                if (processo.getTempoChegada() == null && processo.getTempoChegada() <= tempoAtual) {
-                    if (processoMaisCurto == null | processo.getTempoServico() < processoMaisCurto.getTempoServico()) {
+                if (processo.getTurnaround().isPresent()) {
+                    continue;
+                }
+                if (processo.getTempoChegada() <= tempoAtual) {
+                    if (processoMaisCurto == null || processo.getTempoServico() < processoMaisCurto.getTempoServico()) {
                         processoMaisCurto = processo;
                     }
                 }
