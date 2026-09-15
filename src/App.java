@@ -8,21 +8,29 @@ public class App {
 
     public App() {
         for (int i = 1; i <= arquivos; i++) {
-            List<String> linhas = lerArquivo(diretorio + "TESTE-%02d.txt".formatted(i));
-            int quantum = Integer.parseInt(linhas.removeFirst());
-            List<Processo> processos = linhas.stream().map(l -> new Processo(Integer.parseInt(l.split(" ")[0]), Integer.parseInt(l.split(" ")[1]))).toList();
+            try {
+                List<String> linhas = lerArquivo(diretorio + "TESTE-%02d.txt".formatted(i));
+                int quantum = Integer.parseInt(linhas.removeFirst());
+                List<Processo> processos = linhas.stream().map(l -> new Processo(Integer.parseInt(l.split(" ")[0]), Integer.parseInt(l.split(" ")[1]))).toList();
 
-            List<Processo> processosFIFO = processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
-            List<Processo> processosSJF = processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
-            List<Processo> processosSRT = processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
-            List<Processo> processosRR = processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
+                List<Processo> processosFIFO = duplicarProcessos(processos);
+                List<Processo> processosSJF = duplicarProcessos(processos);
+                List<Processo> processosSRT = duplicarProcessos(processos);
+                List<Processo> processosRR = duplicarProcessos(processos);
 
-            Metricas metricaFIFO = (new AlgoritmoFIFO()).executar(processosFIFO);
-            Metricas metricaSJF = (new AlgoritmoSJF()).executar(processosSJF);
-            Metricas metricaSRT = (new AlgoritmoSRT()).executar(processosSRT);
-            Metricas metricaRR = (new AlgoritmoRR(quantum)).executar(processosRR);
-            gravarArquivo(diretorio + "TESTE-%02d-RESULTADO.txt".formatted(i), List.of(metricaFIFO.toString(), metricaSJF.toString(), metricaSRT.toString(), metricaRR.toString()));
+                Metricas metricaFIFO = (new AlgoritmoFIFO()).executar(processosFIFO);
+                Metricas metricaSJF = (new AlgoritmoSJF()).executar(processosSJF);
+                Metricas metricaSRT = (new AlgoritmoSRT()).executar(processosSRT);
+                Metricas metricaRR = (new AlgoritmoRR(quantum)).executar(processosRR);
+                gravarArquivo(diretorio + "TESTE-%02d-RESULTADO.txt".formatted(i), List.of(metricaFIFO.toString(), metricaSJF.toString(), metricaSRT.toString(), metricaRR.toString()));
+            } catch (Exception e) {
+                System.err.printf("Arquivo %d: %s\n", i, e.getMessage());
+            }
         }
+    }
+
+    private static List<Processo> duplicarProcessos(List<Processo> processos) {
+        return processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
     }
 
     public List<String> lerArquivo(String caminho) {

@@ -3,7 +3,7 @@ import java.util.*;
 public class AlgoritmoSRT implements Algoritmo {
     @Override
     public Metricas executar(List<Processo> processos) {
-        Queue<Processo> fila = new PriorityQueue<>(Comparator.comparingInt(Processo::getTempoRestante));
+        Queue<Processo> fila = new PriorityQueue<>(Comparator.comparingInt(Processo::getTempoRestante).thenComparingInt(Processo::getTempoChegada));
 
         int ultimoAChegar = Processo.getUltimoAChegar(processos);
         int tempo = 0;

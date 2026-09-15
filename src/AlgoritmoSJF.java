@@ -10,7 +10,7 @@ public class AlgoritmoSJF implements Algoritmo {
         while (processosConcluidos < totalProcessos) {
             Processo processoMaisCurto = null;
             for (Processo processo : processos) {
-                if (processo.getTurnaround().isPresent()) {
+                if (processo.concluido()) {
                     continue;
                 }
                 if (processo.getTempoChegada() <= tempoAtual) {
@@ -24,6 +24,7 @@ public class AlgoritmoSJF implements Algoritmo {
                 processoMaisCurto.setTempoPrimeiraExecucao(tempoAtual);
                 tempoAtual += processoMaisCurto.getTempoServico();
                 processoMaisCurto.setTempoConclusao(tempoAtual - 1);
+                processoMaisCurto.setTempoRestante(0);
                 processosConcluidos++;
             } else {
                 tempoAtual++;
@@ -34,9 +35,9 @@ public class AlgoritmoSJF implements Algoritmo {
         double somaTurnaroud = 0;
 
         for (Processo processo : processos) {
-            somaResposta += processo.getTempoResposta().orElse(0);
-            somaEspera += processo.getTempoEspera().orElse(0);
-            somaTurnaroud += processo.getTurnaround().orElse(0);
+            somaResposta += processo.getTempoResposta();
+            somaEspera += processo.getTempoEspera();
+            somaTurnaroud += processo.getTurnaround();
         }
         return new Metricas(somaResposta/totalProcessos, somaEspera/totalProcessos,somaTurnaroud/totalProcessos);
     }

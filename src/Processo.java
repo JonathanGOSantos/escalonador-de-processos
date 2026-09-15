@@ -54,29 +54,24 @@ public class Processo {
         this.tempoConclusao = tempoConclusao;
     }
 
-    public Optional<Integer> getTempoEspera() {
-        if (tempoConclusao == null) {
-            return Optional.empty();
-        }
-        return Optional.of(tempoConclusao - tempoChegada - tempoServico + 1);
+    public Integer getTempoEspera() {
+        return tempoConclusao - tempoChegada - tempoServico + 1;
     }
 
-    public Optional<Integer> getTempoResposta() {
-        if (tempoPrimeiraExecucao == null) {
-            return Optional.empty();
-        }
-        return Optional.of(tempoPrimeiraExecucao - tempoChegada);
+    public void setTempoRestante(Integer tempoRestante) {
+        this.tempoRestante = tempoRestante;
     }
 
-    public Optional<Integer> getTurnaround() {
-        if (tempoConclusao == null) {
-            return Optional.empty();
-        }
-        return Optional.of(tempoConclusao - tempoChegada + 1);
+    public Integer getTempoResposta() {
+        return tempoPrimeiraExecucao - tempoChegada;
+    }
+
+    public Integer getTurnaround() {
+        return tempoConclusao - tempoChegada + 1;
     }
 
     public static Integer getUltimoAChegar(List<Processo> processos) {
-        return processos.stream().max(Comparator.comparing(Processo::getTempoChegada)).get().getTempoChegada();
+        return processos.stream().max(Comparator.comparing(Processo::getTempoChegada)).orElseThrow().getTempoChegada();
     }
 
     public static List<Processo> getProcessosEm(List<Processo> processos, int finalTempo) {
@@ -84,14 +79,14 @@ public class Processo {
     }
 
     public static double getMediaTurnaround(List<Processo> processos) {
-        return (double) processos.stream().map(Processo::getTurnaround).map(Optional::get).reduce(Integer::sum).get() / processos.size();
+        return (double) processos.stream().map(Processo::getTurnaround).reduce(Integer::sum).orElse(0) / processos.size();
     }
 
     public static double getMediaTempoEspera(List<Processo> processos) {
-        return (double) processos.stream().map(Processo::getTempoEspera).map(Optional::get).reduce(Integer::sum).get() / processos.size();
+        return (double) processos.stream().map(Processo::getTempoEspera).reduce(Integer::sum).orElse(0) / processos.size();
     }
 
     public static double getMediaTempoResposta(List<Processo> processos) {
-        return (double) processos.stream().map(Processo::getTempoResposta).map(Optional::get).reduce(Integer::sum).get() / processos.size();
+        return (double) processos.stream().map(Processo::getTempoResposta).reduce(Integer::sum).orElse(0) / processos.size();
     }
 }

@@ -16,9 +16,9 @@ public class AlgoritmoRR implements Algoritmo {
         int ultimoAChegar = Processo.getUltimoAChegar(processos);
         int tempo = 0;
         int execucoes = 0;
-
-        fila.addAll(Processo.getProcessosEm(processos, 0));
         while (tempo <= ultimoAChegar || !fila.isEmpty()) {
+            int finalTempo = tempo;
+            fila.addAll(Processo.getProcessosEm(processos, tempo));
             Processo primeiro = fila.peek();
             if (primeiro != null) {
                 primeiro.setTempoPrimeiraExecucao(tempo);
@@ -28,15 +28,13 @@ public class AlgoritmoRR implements Algoritmo {
                     fila.remove(primeiro);
                     primeiro.setTempoConclusao(tempo);
                     execucoes = 0;
+                } else if (execucoes == quantum) {
+                    fila.remove(primeiro);
+                    execucoes = 0;
+                    fila.add(primeiro);
                 }
             }
             tempo++;
-            if (execucoes == quantum) {
-                fila.remove(primeiro);
-                execucoes = 0;
-                fila.addAll(Processo.getProcessosEm(processos, tempo+1));
-                fila.add(primeiro);
-            }
         }
 
         double mediaTempoResposta = Processo.getMediaTempoResposta(processos);
