@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class App {
-    private static final String diretorio = "C:\\Teste_SistemasOperacionais\\";
+    private static final String diretorio = "C:\\Users\\0118303\\OneDrive - Instituto Federal de Minas Gerais\\Sistemas Operacionais\\escalonador-de-processos\\src\\";
     private static final int arquivos = 3;
 
     public App() {

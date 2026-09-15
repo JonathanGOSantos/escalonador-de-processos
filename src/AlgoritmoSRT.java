@@ -5,11 +5,10 @@ public class AlgoritmoSRT implements Algoritmo {
     public Metricas executar(List<Processo> processos) {
         Queue<Processo> fila = new PriorityQueue<>(Comparator.comparingInt(Processo::getTempoRestante));
 
-        int ultimoAChegar = processos.stream().max(Comparator.comparing(Processo::getTempoChegada)).get().getTempoChegada();
+        int ultimoAChegar = Processo.getUltimoAChegar(processos);
         int tempo = 0;
         while (tempo <= ultimoAChegar || !fila.isEmpty()) {
-            int finalTempo = tempo;
-            fila.addAll(processos.stream().filter(p -> p.getTempoChegada().equals(finalTempo)).toList());
+            fila.addAll(Processo.getProcessosEm(processos, tempo));
             Processo primeiro = fila.peek();
             if (primeiro != null) {
                 fila.remove(primeiro);
@@ -24,9 +23,9 @@ public class AlgoritmoSRT implements Algoritmo {
             tempo++;
         }
 
-        double mediaTempoResposta = (double) processos.stream().map(Processo::getTempoResposta).map(Optional::get).reduce(Integer::sum).get() / processos.size();
-        double mediaTempoEspera = (double) processos.stream().map(Processo::getTempoEspera).map(Optional::get).reduce(Integer::sum).get() / processos.size();;
-        double mediaTurnaround = (double) processos.stream().map(Processo::getTurnaround).map(Optional::get).reduce(Integer::sum).get() / processos.size();;
+        double mediaTempoResposta = Processo.getMediaTempoResposta(processos);
+        double mediaTempoEspera = Processo.getMediaTempoEspera(processos);
+        double mediaTurnaround = Processo.getMediaTurnaround(processos);
         return new Metricas(mediaTempoResposta, mediaTempoEspera, mediaTurnaround);
     }
 }

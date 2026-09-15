@@ -1,3 +1,5 @@
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 public class Processo {
@@ -71,5 +73,25 @@ public class Processo {
             return Optional.empty();
         }
         return Optional.of(tempoConclusao - tempoChegada + 1);
+    }
+
+    public static Integer getUltimoAChegar(List<Processo> processos) {
+        return processos.stream().max(Comparator.comparing(Processo::getTempoChegada)).get().getTempoChegada();
+    }
+
+    public static List<Processo> getProcessosEm(List<Processo> processos, int finalTempo) {
+        return processos.stream().filter(p -> p.getTempoChegada().equals(finalTempo)).toList();
+    }
+
+    public static double getMediaTurnaround(List<Processo> processos) {
+        return (double) processos.stream().map(Processo::getTurnaround).map(Optional::get).reduce(Integer::sum).get() / processos.size();
+    }
+
+    public static double getMediaTempoEspera(List<Processo> processos) {
+        return (double) processos.stream().map(Processo::getTempoEspera).map(Optional::get).reduce(Integer::sum).get() / processos.size();
+    }
+
+    public static double getMediaTempoResposta(List<Processo> processos) {
+        return (double) processos.stream().map(Processo::getTempoResposta).map(Optional::get).reduce(Integer::sum).get() / processos.size();
     }
 }

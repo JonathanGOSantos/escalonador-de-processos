@@ -13,12 +13,12 @@ public class AlgoritmoRR implements Algoritmo {
     @Override
     public Metricas executar(List<Processo> processos) {
         Queue<Processo> fila = new LinkedList<>();
-        int ultimoAChegar = processos.stream().max(Comparator.comparing(Processo::getTempoChegada)).get().getTempoChegada();
+        int ultimoAChegar = Processo.getUltimoAChegar(processos);
         int tempo = 0;
         int execucoes = 0;
+
+        fila.addAll(Processo.getProcessosEm(processos, 0));
         while (tempo <= ultimoAChegar || !fila.isEmpty()) {
-            int finalTempo = tempo;
-            fila.addAll(processos.stream().filter(p -> p.getTempoChegada().equals(finalTempo)).toList());
             Processo primeiro = fila.peek();
             if (primeiro != null) {
                 primeiro.setTempoPrimeiraExecucao(tempo);
@@ -28,18 +28,20 @@ public class AlgoritmoRR implements Algoritmo {
                     fila.remove(primeiro);
                     primeiro.setTempoConclusao(tempo);
                     execucoes = 0;
-                } else if (execucoes == quantum) {
-                    fila.remove(primeiro);
-                    execucoes = 0;
-                    fila.add(primeiro);
                 }
             }
             tempo++;
+            if (execucoes == quantum) {
+                fila.remove(primeiro);
+                execucoes = 0;
+                fila.addAll(Processo.getProcessosEm(processos, tempo+1));
+                fila.add(primeiro);
+            }
         }
 
-        double mediaTempoResposta = (double) processos.stream().map(Processo::getTempoResposta).map(Optional::get).reduce(Integer::sum).get() / processos.size();
-        double mediaTempoEspera = (double) processos.stream().map(Processo::getTempoEspera).map(Optional::get).reduce(Integer::sum).get() / processos.size();;
-        double mediaTurnaround = (double) processos.stream().map(Processo::getTurnaround).map(Optional::get).reduce(Integer::sum).get() / processos.size();;
+        double mediaTempoResposta = Processo.getMediaTempoResposta(processos);
+        double mediaTempoEspera = Processo.getMediaTempoEspera(processos);
+        double mediaTurnaround = Processo.getMediaTurnaround(processos);
         return new Metricas(mediaTempoResposta, mediaTempoEspera, mediaTurnaround);
     }
 }
