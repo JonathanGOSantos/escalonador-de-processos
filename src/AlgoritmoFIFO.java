@@ -1,10 +1,8 @@
-import java.util.Comparator;
 import java.util.List;
 
 public class AlgoritmoFIFO implements Algoritmo {
     @Override
     public Metricas executar(List<Processo> processos) {
-        processos.sort(Comparator.comparingInt(Processo::getTempoChegada));
         int tempoAtual = 0;
         for (Processo processo : processos) {
             tempoAtual = Math.max(tempoAtual, processo.getTempoChegada());

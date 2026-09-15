@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class App {
-    // Caminho para os arquivos. Deixe vazio ("") para buscar na pasta atual (útil para o SUAP).
-    // Na hora da apresentação, você pode colocar o caminho do pendrive.
     private static final String diretorio = "F:\\";
     private static final int arquivos = 10;
 
