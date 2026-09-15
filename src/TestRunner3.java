@@ -1,18 +1,18 @@
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class AlgoritmoRR implements Algoritmo {
-    private int quantum;
-
-    public AlgoritmoRR(int quantum) {
-        if (quantum <= 0) {
-            throw new IllegalArgumentException("Quantum deve ser maior que 0");
-        }
-        this.quantum = quantum;
-    }
-
-    @Override
-    public Metricas executar(List<Processo> processos) {
+public class TestRunner3 {
+    public static void main(String[] args) {
+        List<Processo> processos = new ArrayList<>();
+        processos.add(new Processo(1, 8));
+        processos.add(new Processo(4, 4));
+        processos.add(new Processo(5, 3));
+        processos.add(new Processo(5, 3));
+        processos.add(new Processo(15, 4));
+        processos.add(new Processo(16, 2));
+        processos.add(new Processo(17, 1));
+        
+        int quantum = 3;
         Queue<Processo> fila = new LinkedList<>();
         AtomicInteger indiceProximoProcesso = new AtomicInteger(0);
         int tempo = 0;
@@ -36,10 +36,12 @@ public class AlgoritmoRR implements Algoritmo {
             }
             tempo++;
         }
-
-        double mediaTempoResposta = Processo.getMediaTempoResposta(processos);
-        double mediaTempoEspera = Processo.getMediaTempoEspera(processos);
-        double mediaTurnaround = Processo.getMediaTurnaround(processos);
-        return new Metricas(mediaTempoResposta, mediaTempoEspera, mediaTurnaround);
+        
+        for (int i = 0; i < processos.size(); i++) {
+            Processo p = processos.get(i);
+            System.out.printf("P%d: Arr=%d Serv=%d First=%d Fin=%d Resp=%d Wait=%d Turn=%d\n",
+                i+1, p.getTempoChegada(), p.getTempoServico(), p.getTempoResposta() + p.getTempoChegada(), 
+                p.getTurnaround() + p.getTempoChegada() - 1, p.getTempoResposta(), p.getTempoEspera(), p.getTurnaround());
+        }
     }
 }

@@ -1,17 +1,23 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class App {
-    private static final String diretorio = "C:\\Users\\0118303\\OneDrive - Instituto Federal de Minas Gerais\\Sistemas Operacionais\\escalonador-de-processos\\src\\";
-    private static final int arquivos = 3;
+    // Caminho para os arquivos. Deixe vazio ("") para buscar na pasta atual (útil para o SUAP).
+    // Na hora da apresentação, você pode colocar o caminho do pendrive.
+    private static final String diretorio = "F:\\";
+    private static final int arquivos = 10;
 
     public App() {
         for (int i = 1; i <= arquivos; i++) {
             try {
-                List<String> linhas = lerArquivo(diretorio + "TESTE-%02d.txt".formatted(i));
+                String caminhoEntrada = diretorio + "TESTE-%02d.txt".formatted(i);
+                List<String> linhas = lerArquivo(caminhoEntrada);
+                if (linhas.isEmpty()) continue; // Skip if file doesn't exist or is empty
                 int quantum = Integer.parseInt(linhas.removeFirst());
-                List<Processo> processos = linhas.stream().map(l -> new Processo(Integer.parseInt(l.split(" ")[0]), Integer.parseInt(l.split(" ")[1]))).toList();
+                List<Processo> processos = linhas.stream().map(l -> new Processo(Integer.parseInt(l.split(" ")[0]), Integer.parseInt(l.split(" ")[1]))).sorted(Comparator.comparingInt(Processo::getTempoChegada)).toList();
 
                 List<Processo> processosFIFO = duplicarProcessos(processos);
                 List<Processo> processosSJF = duplicarProcessos(processos);
@@ -22,15 +28,17 @@ public class App {
                 Metricas metricaSJF = (new AlgoritmoSJF()).executar(processosSJF);
                 Metricas metricaSRT = (new AlgoritmoSRT()).executar(processosSRT);
                 Metricas metricaRR = (new AlgoritmoRR(quantum)).executar(processosRR);
-                gravarArquivo(diretorio + "TESTE-%02d-RESULTADO.txt".formatted(i), List.of(metricaFIFO.toString(), metricaSJF.toString(), metricaSRT.toString(), metricaRR.toString()));
+                
+                String caminhoSaida = diretorio + "TESTE-%02d-RESULTADO.txt".formatted(i);
+                gravarArquivo(caminhoSaida, List.of(metricaFIFO.toString(), metricaSJF.toString(), metricaSRT.toString(), metricaRR.toString()));
             } catch (Exception e) {
-                System.err.printf("Arquivo %d: %s\n", i, e.getMessage());
+                System.err.printf("Erro ao processar TESTE-%02d.txt: %s\n", i, e.getMessage());
             }
         }
     }
 
     private static List<Processo> duplicarProcessos(List<Processo> processos) {
-        return processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).toList();
+        return processos.stream().map(p -> new Processo(p.getTempoChegada(), p.getTempoServico())).collect(Collectors.toList());
     }
 
     public List<String> lerArquivo(String caminho) {

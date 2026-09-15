@@ -1,6 +1,7 @@
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Processo {
     private final Integer tempoChegada;
@@ -74,19 +75,23 @@ public class Processo {
         return processos.stream().max(Comparator.comparing(Processo::getTempoChegada)).orElseThrow().getTempoChegada();
     }
 
-    public static List<Processo> getProcessosEm(List<Processo> processos, int finalTempo) {
-        return processos.stream().filter(p -> p.getTempoChegada().equals(finalTempo)).toList();
+    public static List<Processo> getProcessosEm(List<Processo> processos, int tempo, AtomicInteger indiceProximoProcesso) {
+        List<Processo> lista = new ArrayList<>();
+        while (indiceProximoProcesso.get() < processos.size() && processos.get(indiceProximoProcesso.get()).getTempoChegada() == tempo) {
+            lista.add(processos.get(indiceProximoProcesso.getAndIncrement()));
+        }
+        return lista;
     }
 
     public static double getMediaTurnaround(List<Processo> processos) {
-        return (double) processos.stream().map(Processo::getTurnaround).reduce(Integer::sum).orElse(0) / processos.size();
+        return processos.stream().mapToDouble(Processo::getTurnaround).sum() / processos.size();
     }
 
     public static double getMediaTempoEspera(List<Processo> processos) {
-        return (double) processos.stream().map(Processo::getTempoEspera).reduce(Integer::sum).orElse(0) / processos.size();
+        return processos.stream().mapToDouble(Processo::getTempoEspera).sum() / processos.size();
     }
 
     public static double getMediaTempoResposta(List<Processo> processos) {
-        return (double) processos.stream().map(Processo::getTempoResposta).reduce(Integer::sum).orElse(0) / processos.size();
+        return processos.stream().mapToDouble(Processo::getTempoResposta).sum() / processos.size();
     }
 }

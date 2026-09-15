@@ -1,14 +1,15 @@
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AlgoritmoSRT implements Algoritmo {
     @Override
     public Metricas executar(List<Processo> processos) {
         Queue<Processo> fila = new PriorityQueue<>(Comparator.comparingInt(Processo::getTempoRestante).thenComparingInt(Processo::getTempoChegada));
 
-        int ultimoAChegar = Processo.getUltimoAChegar(processos);
+        AtomicInteger indiceProximoProcesso = new AtomicInteger(0);
         int tempo = 0;
-        while (tempo <= ultimoAChegar || !fila.isEmpty()) {
-            fila.addAll(Processo.getProcessosEm(processos, tempo));
+        while (indiceProximoProcesso.get() < processos.size() || !fila.isEmpty()) {
+            fila.addAll(Processo.getProcessosEm(processos, tempo, indiceProximoProcesso));
             Processo primeiro = fila.peek();
             if (primeiro != null) {
                 fila.remove(primeiro);
